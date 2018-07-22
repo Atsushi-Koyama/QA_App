@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         // UIの準備
-        setTitle("ログイン");
+        setTitle("ログイソ");
 
         mEmailEditText = (EditText) findViewById(R.id.emailText);
         mPasswordEditText = (EditText) findViewById(R.id.passwordText);
@@ -201,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveName(String name) {
-        // Preferenceに保存する
+        // Preferenceに保存すす（Android のアプリケーションでデータの永続化をしてくれる）
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(Const.NameKEY, name);
