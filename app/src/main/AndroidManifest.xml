@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.example.test.qa_app  "
+<manifest package="com.example.test.qa_app"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -26,6 +26,7 @@
         <activity android:name=".SettingActivity"></activity>
         <activity android:name=".QuestionSendActivity"></activity>
         <activity android:name=".QuestionDetailActivity"></activity>
+        <activity android:name=".AnswerSendActivity"></activity>
     </application>
 
 </manifest>
