@@ -230,6 +230,8 @@ public class QuestionSendActivity extends AppCompatActivity implements View.OnCl
         startActivityForResult(chooserIntent, CHOOSER_REQUEST_CODE);
     }
 
+
+    //firebaseを実装するタイに必ず必要なメソッド
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         mProgress.dismiss();
