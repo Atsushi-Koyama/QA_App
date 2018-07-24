@@ -1,11 +1,13 @@
 package com.example.test.qa_app;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,14 +18,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.lang.String;
 
 public class QuestionDetailActivity extends AppCompatActivity {
+
+    private int favoriteFL;
+    private Button mFavoriteButton;
+
+    DatabaseReference mDataBaseReference;
+
+    private int mGenre;
+    private int mFavorite;
+    private ProgressDialog mProgress;
 
     private ListView mListView;
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
 
     private DatabaseReference mAnswerRef;
+    private DatabaseReference mFavoriteRef;
 
     private ChildEventListener mEventListener = new ChildEventListener() {
         @Override
@@ -69,14 +82,59 @@ public class QuestionDetailActivity extends AppCompatActivity {
         }
     };
 
+    private ChildEventListener mFavoriteListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            favoriteFL = 1;
+            mFavoriteButton.setText("お気に入りから削除");
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    public QuestionDetailActivity() {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_detail);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        mFavoriteButton = (Button) findViewById(R.id.favorite_button);
+        mFavoriteButton.setOnClickListener(this);
+
         // 渡ってきたQuestionのオブジェクトを保持する
         Bundle extras = getIntent().getExtras();
         mQuestion = (Question) extras.get("question");
+
+        if (user == null) {
+            //ログインしていない場合は、お気に入りボタンを消す
+            mFavoriteButton.setVisibility(View.INVISIBLE);
+
+        }else{
+            //ログイン済みの場合は、お気に入りボタンを表示
+            mFavoriteButton.setVisibility(View.VISIBLE);
+        }
 
         setTitle(mQuestion.getTitle());
 
@@ -108,5 +166,15 @@ public class QuestionDetailActivity extends AppCompatActivity {
         DatabaseReference dataBaseReference = FirebaseDatabase.getInstance().getReference();
         mAnswerRef = dataBaseReference.child(Const.ContentsPATH).child(String.valueOf(mQuestion.getGenre())).child(mQuestion.getQuestionUid()).child(Const.AnswersPATH);
         mAnswerRef.addChildEventListener(mEventListener);
+
+        if (user != null) {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            mFavoriteRef = databaseReference.child(Const.FavoritePATH).child(String.valueOf(user.getUid())).child(String.valueOf(mQuestion.getQuestionUid()));
+            mFavoriteRef.addChildEventListener(mFavoriteListener);
+        }
+    }
+    @override
+    public void onClick(View v) {
+        
     }
 }
