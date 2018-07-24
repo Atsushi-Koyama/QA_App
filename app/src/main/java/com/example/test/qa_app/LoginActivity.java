@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         // UIの準備
-        setTitle("ログイソ");
+        setTitle("ログイン");
 
         mEmailEditText = (EditText) findViewById(R.id.emailText);
         mPasswordEditText = (EditText) findViewById(R.id.passwordText);

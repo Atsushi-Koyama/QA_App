@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             Question question = new Question(title, body, name, uid, dataSnapshot.getKey(), mGenre, bytes, answerArrayList);
             mQuestionArrayList.add(question);
+            // 表示を更新するために、アダプターにデータが変更されたことを知らせる
             mAdapter.notifyDataSetChanged();
         }
 
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
 
+                    // 表示を更新するために、アダプターにデータが変更されたことを知らせる
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -195,18 +197,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+        //menuの取得
         Menu menu =mNavigationView.getMenu();
+        //menuの中のfavoriteのみ取得
         MenuItem menuItem = menu.findItem(R.id.nav_favorite);
 
+        //favorite表示しない
         if (user == null){
             menuItem.setVisible(false);
         }else{
+        //favorite表示する
             menuItem.setVisible(true);
         }
 
 
         // 1:趣味を既定の選択とする
-        if(mGenre == 0) {
+        if(mGenre == 0 || mGenre == 5) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
@@ -271,8 +277,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
         mGenreRef.addChildEventListener(mEventListener);
-
-
         return true;
     }
 }

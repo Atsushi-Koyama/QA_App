@@ -27,12 +27,6 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
     private int favoriteFL;
     private Button mFavoriteButton;
 
-    DatabaseReference mDataBaseReference;
-
-    private int mGenre;
-    private int mFavorite;
-    private ProgressDialog mProgress;
-
     private ListView mListView;
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
@@ -83,6 +77,31 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
 
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            //ログインしていない場合は、お気に入りボタンを消す
+            mFavoriteButton.setVisibility(View.INVISIBLE);
+
+        }else{
+            //ログイン済みの場合は、お気に入りボタンを表示
+            mFavoriteButton.setVisibility(View.VISIBLE);
+        }
+
+        if (user != null) {
+
+            //firebaseの準備
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            //favorite/userId/QuestionIdのディレクトリにアクセス
+            mFavoriteRef = databaseReference.child(Const.FavoritePATH).child(String.valueOf(user.getUid())).child(String.valueOf(mQuestion.getQuestionUid()));
+            //すでに該当ディレクトリにインスタンスがある場合
+            mFavoriteRef.addChildEventListener(mFavoriteListener);
+        }
+    }
 
     private ChildEventListener mFavoriteListener = new ChildEventListener() {
         @Override
@@ -168,22 +187,31 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
         DatabaseReference dataBaseReference = FirebaseDatabase.getInstance().getReference();
         mAnswerRef = dataBaseReference.child(Const.ContentsPATH).child(String.valueOf(mQuestion.getGenre())).child(mQuestion.getQuestionUid()).child(Const.AnswersPATH);
         mAnswerRef.addChildEventListener(mEventListener);
-
+        //ログインしていれば
         if (user != null) {
+            //firebaseの準備
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            //favorite/userId/QuestionIdのディレクトリにアクセス
             mFavoriteRef = databaseReference.child(Const.FavoritePATH).child(String.valueOf(user.getUid())).child(String.valueOf(mQuestion.getQuestionUid()));
+            //すでに該当ディレクトリにインスタンスがある場合
             mFavoriteRef.addChildEventListener(mFavoriteListener);
         }
     }
 
 //    @Override
     public void onClick(View v) {
+        //現在のログインユーザーの取得
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //firebaseの取得の準備
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        //favoritePathのユーザーの生成、その下にお気に入りを下ユーザーIDの生成その下にQuestionIDのユーザのIDの生成
         mFavoriteRef = databaseReference.child(Const.FavoritePATH).child(String.valueOf(user.getUid())).child(String.valueOf(mQuestion.getQuestionUid()));
+
         if (favoriteFL == 0) {
             Map<String, String> data = new HashMap<String, String>();
+            //QuestionIDのユーザのIDの下にQuestionのIDを付与。キーはジャンル
             data.put("ジャンル", String.valueOf(mQuestion.getGenre()));
+            //completionListenerを使用することで、onCompleteが呼ばれる。
             mFavoriteRef.setValue(data, this);
             mFavoriteButton.setText("お気に入りから削除");
             favoriteFL = 1;
@@ -193,14 +221,13 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
             favoriteFL = 0;
         }
     }
+    //completionListenerで呼ばれる
 //    @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         if (databaseError == null) {
             Snackbar.make(findViewById(android.R.id.content), "お気に入り追加しました", Snackbar.LENGTH_LONG).show();
         }else{
             Snackbar.make(findViewById(android.R.id.content), "お気に入り追加に失敗しました", Snackbar.LENGTH_LONG).show();
-
-
         }
     }
 }
