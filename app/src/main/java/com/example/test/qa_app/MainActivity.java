@@ -1,8 +1,6 @@
 package com.example.test.qa_app;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -31,8 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar mToolbar;
     private int mGenre = 0;
@@ -41,7 +38,11 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference mGenreRef;
     private ListView mListView;
     private ArrayList<Question> mQuestionArrayList;
+    //クラスを保持した配列を定義
     private QuestionsListAdapter mAdapter;
+
+    private NavigationView mNavigationView;
+
 
     private ChildEventListener mEventListener = new ChildEventListener() {
         @Override
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,6 +174,7 @@ public class MainActivity extends AppCompatActivity
         mQuestionArrayList = new ArrayList<Question>();
         mAdapter.notifyDataSetChanged();
 
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -187,6 +190,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        Menu menu =mNavigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_favorite);
+
+        if (user == null){
+            menuItem.setVisible(false);
+        }else{
+            menuItem.setVisible(true);
+        }
+
 
         // 1:趣味を既定の選択とする
         if(mGenre == 0) {
@@ -231,6 +248,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_compter) {
             mToolbar.setTitle("コンピューター");
             mGenre = 4;
+        }else if (id == R.id.nav_favorite) {
+            mToolbar.setTitle("お気に入り");
+            mGenre = 5;
+            Intent intent = new Intent(getApplicationContext(),FavoriteListAdapter.class);
+            startActivity(intent);
+            return true;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

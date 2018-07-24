@@ -16,11 +16,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import android.support.design.widget.Snackbar;
 
 import java.util.HashMap;
 import java.lang.String;
+import java.util.Map;
 
-public class QuestionDetailActivity extends AppCompatActivity {
+public class QuestionDetailActivity extends AppCompatActivity implements View.OnClickListener,DatabaseReference.CompletionListener {
 
     private int favoriteFL;
     private Button mFavoriteButton;
@@ -120,7 +122,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        mFavoriteButton = (Button) findViewById(R.id.favorite_button);
+        mFavoriteButton = findViewById(R.id.favorite_button);
         mFavoriteButton.setOnClickListener(this);
 
         // 渡ってきたQuestionのオブジェクトを保持する
@@ -173,8 +175,32 @@ public class QuestionDetailActivity extends AppCompatActivity {
             mFavoriteRef.addChildEventListener(mFavoriteListener);
         }
     }
-    @override
+
+//    @Override
     public void onClick(View v) {
-        
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        mFavoriteRef = databaseReference.child(Const.FavoritePATH).child(String.valueOf(user.getUid())).child(String.valueOf(mQuestion.getQuestionUid()));
+        if (favoriteFL == 0) {
+            Map<String, String> data = new HashMap<String, String>();
+            data.put("ジャンル", String.valueOf(mQuestion.getGenre()));
+            mFavoriteRef.setValue(data, this);
+            mFavoriteButton.setText("お気に入りから削除");
+            favoriteFL = 1;
+        }else {
+            mFavoriteRef.removeValue();
+            mFavoriteButton.setText("お気に入り登録");
+            favoriteFL = 0;
+        }
+    }
+//    @Override
+    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        if (databaseError == null) {
+            Snackbar.make(findViewById(android.R.id.content), "お気に入り追加しました", Snackbar.LENGTH_LONG).show();
+        }else{
+            Snackbar.make(findViewById(android.R.id.content), "お気に入り追加に失敗しました", Snackbar.LENGTH_LONG).show();
+
+
+        }
     }
 }
