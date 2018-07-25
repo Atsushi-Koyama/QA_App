@@ -137,7 +137,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_detail);
-
+        //firebaseから現在ヨグイン中のユーザーを取得する。
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         mFavoriteButton = findViewById(R.id.favorite_button);
@@ -160,8 +160,11 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
 
         // ListViewの準備
         mListView = (ListView) findViewById(R.id.listView);
+        //Adapterのインスタンス化Viewとメンバ変数を渡す。
         mAdapter = new QuestionDetailListAdapter(this, mQuestion);
+        //mListViewへセット
         mListView.setAdapter(mAdapter);
+        //Adapterへ再表示をさせる。
         mAdapter.notifyDataSetChanged();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

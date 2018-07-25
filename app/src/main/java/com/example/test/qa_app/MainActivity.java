@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (dataSnapshot.getKey().equals(question.getQuestionUid())) {
                     // このアプリで変更がある可能性があるのは回答(Answer)のみ
                     question.getAnswers().clear();
+                    //answersのキーをパース
                     HashMap answerMap = (HashMap) map.get("answers");
                     if (answerMap != null) {
                         for (Object key : answerMap.keySet()) {
@@ -155,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     intent.putExtra("genre", mGenre);
                     startActivity(intent);
                 }
-
             }
         });
 
@@ -244,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_hobby) {
+            //上記スライドバーのタイトル
             mToolbar.setTitle("趣味");
             mGenre = 1;
         } else if (id == R.id.nav_life) {

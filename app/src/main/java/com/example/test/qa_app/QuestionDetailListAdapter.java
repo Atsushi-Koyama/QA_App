@@ -12,19 +12,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class QuestionDetailListAdapter extends BaseAdapter {
+    //質問のレイアウトを分別するための定義
     private final static int TYPE_QUESTION = 0;
     private final static int TYPE_ANSWER = 1;
 
     private LayoutInflater mLayoutInflater = null;
     private Question mQustion;
 
+    //QuestionDetailListAdapterのインスタンス化に必要
     public QuestionDetailListAdapter(Context context, Question question) {
         mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //渡されたQuestionをメンバ変数へ代入
         mQustion = question;
     }
 
     @Override
     public int getCount() {
+        //Questionの数+mAnswerArrayListの要素数
         return 1 + mQustion.getAnswers().size();
     }
 
