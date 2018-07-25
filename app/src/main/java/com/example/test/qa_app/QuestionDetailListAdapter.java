@@ -17,21 +17,22 @@ public class QuestionDetailListAdapter extends BaseAdapter {
     private final static int TYPE_ANSWER = 1;
 
     private LayoutInflater mLayoutInflater = null;
-    private Question mQustion;
+    private Question mQuestion;
 
     //QuestionDetailListAdapterのインスタンス化に必要
     public QuestionDetailListAdapter(Context context, Question question) {
         mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //渡されたQuestionをメンバ変数へ代入
-        mQustion = question;
+        mQuestion = question;
     }
 
     @Override
     public int getCount() {
         //Questionの数+mAnswerArrayListの要素数
-        return 1 + mQustion.getAnswers().size();
+        return 1 + mQuestion.getAnswers().size();
     }
 
+    //Adapterの振分
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
@@ -41,14 +42,16 @@ public class QuestionDetailListAdapter extends BaseAdapter {
         }
     }
 
+    //今回はAdapterの種類が二種類あるため、return2
     @Override
     public int getViewTypeCount() {
         return 2;
     }
 
+    //position毎のitemを返す
     @Override
     public Object getItem(int position) {
-        return mQustion;
+        return mQuestion;
     }
 
     @Override
@@ -56,15 +59,17 @@ public class QuestionDetailListAdapter extends BaseAdapter {
         return 0;
     }
 
+    //ここでいうconvertViewとはSwiftでcellのこと。
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        //postionが0の時に
         if (getItemViewType(position) == TYPE_QUESTION) {
+            //convertViewの生成がされていない場合は、question_detailクラスのレイアウトを保持した上でインスタンス化を行う。
             if (convertView == null) {
                 convertView = mLayoutInflater.inflate(R.layout.list_question_detail, parent, false);
             }
-            String body = mQustion.getBody();
-            String name = mQustion.getName();
+            String body = mQuestion.getBody();
+            String name = mQuestion.getName();
 
             TextView bodyTextView = convertView.findViewById(R.id.bodyTextView);
             bodyTextView.setText(body);
@@ -72,18 +77,19 @@ public class QuestionDetailListAdapter extends BaseAdapter {
             TextView nameTextView = convertView.findViewById(R.id.nameTextView);
             nameTextView.setText(name);
 
-            byte[] bytes = mQustion.getImageBytes();
+            byte[] bytes = mQuestion.getImageBytes();
             if (bytes.length != 0) {
                 Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length).copy(Bitmap.Config.ARGB_8888, true);
                 ImageView imageView = convertView.findViewById(R.id.imageView);
                 imageView.setImageBitmap(image);
             }
+        //positionが0以外の時（つまりAnswerの時）
         } else {
             if (convertView == null) {
                 convertView = mLayoutInflater.inflate(R.layout.list_answer, parent, false);
             }
 
-            Answer answer = mQustion.getAnswers().get(position - 1);
+            Answer answer = mQuestion.getAnswers().get(position - 1);
             String body = answer.getBody();
             String name = answer.getName();
 

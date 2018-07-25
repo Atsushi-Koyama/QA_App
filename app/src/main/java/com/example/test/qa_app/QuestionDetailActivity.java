@@ -53,6 +53,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
 
             Answer answer = new Answer(body, name, uid, answerUid);
             mQuestion.getAnswers().add(answer);
+            //二回目のnotifyDataSetChangedでAnswerクラスをlistViewへ反映させる
             mAdapter.notifyDataSetChanged();
         }
 
