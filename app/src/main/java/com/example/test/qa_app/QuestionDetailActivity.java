@@ -1,6 +1,5 @@
 package com.example.test.qa_app;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -222,7 +221,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements View.On
         }
     }
     //completionListenerで呼ばれる
-//    @Override
+    @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         if (databaseError == null) {
             Snackbar.make(findViewById(android.R.id.content), "お気に入り追加しました", Snackbar.LENGTH_LONG).show();

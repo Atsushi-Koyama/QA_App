@@ -35,6 +35,8 @@ public class QuestionsListAdapter extends BaseAdapter{
         return position;
     }
 
+    //notifyDataSetChanged();を呼ぶとgetViewが呼ばれる
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

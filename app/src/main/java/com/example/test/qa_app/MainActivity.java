@@ -122,8 +122,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-
+    //Activityが生成された時に1回だけ呼び出される
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         // 1:趣味を既定の選択とする
-        if(mGenre == 0 || mGenre == 5) {
+        if(mGenre == 0) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
@@ -255,8 +256,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mToolbar.setTitle("コンピューター");
             mGenre = 4;
         }else if (id == R.id.nav_favorite) {
-            mToolbar.setTitle("お気に入り");
-            mGenre = 5;
             Intent intent = new Intent(getApplicationContext(),FavoriteListAdapter.class);
             startActivity(intent);
             return true;
@@ -268,14 +267,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
         mQuestionArrayList.clear();
+        //mQuestionArrayList としてセットする（前の情報はクリアしなければならない）
         mAdapter.setQuestionArrayList(mQuestionArrayList);
+        // mAdapterのListView用のアダプタに渡す（設定）
         mListView.setAdapter(mAdapter);
 
         // 選択したジャンルにリスナーを登録する
         if (mGenreRef != null) {
+            //リスナーがすでにある場合はリスナーの削除を行う
             mGenreRef.removeEventListener(mEventListener);
         }
         mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
+        //データがある場合の数呼ばれる（データがあれば呼ばれる）
         mGenreRef.addChildEventListener(mEventListener);
         return true;
     }
